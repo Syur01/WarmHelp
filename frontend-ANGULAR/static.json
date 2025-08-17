@@ -1,0 +1,6 @@
+{
+  "root": "dist/frontend-ANGULAR",
+  "routes": {
+    "/**": "index.html"
+  }
+}
