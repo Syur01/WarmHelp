@@ -1,5 +1,5 @@
 {
-  "root": "dist/frontend-ANGULAR",
+  "root": "dist/frontend-angular",
   "routes": {
     "/**": "index.html"
   }
