@@ -1,0 +1,240 @@
+<div class="perfil-container">
+  <h2 class="title">Mi Perfil</h2>
+
+  <div class="perfil-grid">
+    <!-- Izquierda: Info usuario -->
+    <div class="perfil-card">
+      <div class="avatar-section">
+        <img [src]="avatar?.trim() !== '' ? avatar : '/ken.gif'" alt="Avatar del usuario" class="avatar">
+        <input type="file" accept="image/*" #fileInput hidden (change)="onFileSelected($event)">
+        <button class="btn-editar" (click)="fileInput.click()"><i class="bi bi-pencil-fill"></i></button>
+      </div>
+
+      <div class="info-section">
+        <h3 class="nombre">{{ first_name }} {{ last_name }}</h3>
+        <p class="username"><i class="bi bi-person-fill"></i> {{ username }}</p>
+        <p class="email"><i class="bi bi-envelope-fill"></i> {{ email }}</p>
+        <p class="telefono"><i class="bi bi-telephone-fill"></i> {{ number }}</p>
+        <p class="direccion"><i class="bi bi-geo-alt-fill"></i> {{ address }}</p>
+        <p class="rol"><i class="bi bi-award-fill"></i> {{ role }}</p>
+      </div>
+
+      <div class="descripcion">
+        <p>{{ mySelf_description }}</p>
+      </div>
+
+      <div class="btn-group">
+
+<!-- Botón de Cambio de contraseña -->
+<button class="btn-cambiar-pass" (click)="togglePasswordFields()">
+  <i class="bi bi-key-fill"></i> Cambiar contraseña
+</button>
+
+<!-- Campos de cambio de contraseña -->
+<div *ngIf="showPasswordFields" class="password-change-container">
+  <form (ngSubmit)="onChangePassword()" class="password-form">
+    <div class="form-group password-group">
+      <label>Contraseña actual</label>
+      <div class="input-wrapper">
+        <input [type]="showOldPassword ? 'text' : 'password'" [(ngModel)]="oldPassword" name="oldPassword" required />
+        <button type="button" (click)="showOldPassword = !showOldPassword" class="toggle-eye">
+          <i class="bi" [ngClass]="showOldPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group password-group">
+      <label>Nueva contraseña</label>
+      <div class="input-wrapper">
+        <input [type]="showNewPassword ? 'text' : 'password'" [(ngModel)]="newPassword" name="newPassword" required />
+        <button type="button" (click)="showNewPassword = !showNewPassword" class="toggle-eye">
+          <i class="bi" [ngClass]="showNewPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group password-group">
+      <label>Repetir nueva contraseña</label>
+      <div class="input-wrapper">
+        <input [type]="showRepeatPassword ? 'text' : 'password'" [(ngModel)]="repeatNewPassword" name="repeatNewPassword" required />
+        <button type="button" (click)="showRepeatPassword = !showRepeatPassword" class="toggle-eye">
+          <i class="bi" [ngClass]="showRepeatPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+        </button>
+      </div>
+      <small *ngIf="passwordError" class="error-text">Las nuevas contraseñas no coinciden</small>
+    </div>
+
+
+    <div class="form-btns">
+      <button type="submit" class="btn-guardar">
+        <i class="bi bi-check-lg"></i> Guardar
+      </button>
+      <button type="button" class="btn-cancelar" (click)="cancelPasswordChange()">
+        <i class="bi bi-x-lg"></i> Cancelar
+      </button>
+    </div>
+  </form>
+</div>
+
+
+
+<button class="btn-actualizar" (click)="openEditModal()">
+  <i class="bi bi-gear-fill"></i> Editar perfil
+</button>
+
+       <!-- MODAL DE EDICIÓN DE PERFIL -->
+<div class="modal-overlay" *ngIf="showEditModal">
+  <div class="modal-edit">
+    <h2><i class="bi bi-pencil-fill"></i> Editar perfil</h2>
+    <form (ngSubmit)="onUpdateProfile()" class="form-edit">
+      <div class="input-group">
+        <label>Nombre</label>
+        <input [(ngModel)]="editData.first_name" name="first_name" required />
+      </div>
+
+      <div class="input-group">
+        <label>Apellido</label>
+        <input [(ngModel)]="editData.last_name" name="last_name" required />
+      </div>
+
+      <div class="input-group">
+        <label>Nombre de usuario</label>
+        <input [(ngModel)]="editData.username" name="username" required />
+      </div>
+
+      <div class="input-group">
+        <label>Email</label>
+        <input [(ngModel)]="editData.email" name="email" type="email" required />
+      </div>
+
+      <div class="input-group">
+        <label>Dirección</label>
+        <input [(ngModel)]="editData.address" name="address" />
+      </div>
+
+      <div class="input-group">
+        <label>Teléfono</label>
+        <input [(ngModel)]="editData.number" name="number" />
+      </div>
+
+      <div class="input-group">
+        <label>Sobre mí</label>
+        <textarea [(ngModel)]="editData.mySelf_description" name="mySelf_description" rows="3"></textarea>
+      </div>
+
+      <div class="form-btns">
+        <button type="submit" class="btn-guardar">
+          <i class="bi bi-check-lg"></i> Guardar cambios
+        </button>
+        <button type="button" class="btn-cancelar" (click)="closeEditModal()">
+          <i class="bi bi-x-lg"></i> Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+      </div>
+      <div class="admin-logout-group">
+        <button class="btn-logout" *ngIf="role === 'ADMIN'" routerLink="/app/control-panel">
+          <i class="bi bi-box-arrow-right"></i> Admin Panel
+        </button>
+        <button class="btn-logout" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i> Salir
+        </button>
+      </div>
+    </div>
+
+    <!-- Derecha: Comentarios -->
+    <div class="resenas-card" *ngIf="role === 'PROFESSIONAL' || role === 'ADMIN'">
+      <div class="section-header">
+        <i class="bi bi-star-half"></i>
+        Reseñas recibidas
+      </div>
+      <div *ngIf="reviews.length === 0" class="resena">Aún no has recibido reseñas.</div>
+<div *ngFor="let review of reviews" class="resena">
+  <div class="resena-header">
+    <div>
+      <strong>{{ review.username }}</strong>
+      <div class="estrellas">
+        <i *ngFor="let s of [].constructor(getStarCount(review.calification))" class="bi bi-star-fill"></i>
+      </div>
+    </div>
+    <span>{{ review.createdAt | date:'longDate' }}</span>
+  </div>
+  <p>{{ review.description }}</p>
+</div>
+    </div>
+  </div>
+
+  <!-- Segunda fila: Posts -->
+  <div class="perfil-grid-secundaria">
+    <div class="posts-card"  routerLink="/mis-publicaciones">
+      <div class="section-header">
+        <i class="bi bi-journal-richtext"></i>
+        Mis Publicaciones
+      </div>
+
+      <div *ngIf="posts.length === 0">Aún no has creado publicaciones.</div>
+      <div *ngFor="let post of posts" class="post">
+        <img [src]="post.image ? getImageUrl(post.image) : '/assets/image-not-found.jpg'"
+     (error)="onImageError($event)" alt="Imagen del post">
+        <div class="contenido">
+          <h5>{{ post.title }}</h5>
+          <p class="fecha">{{ post.createdAt | date:'longDate' }}</p>
+          <p class="resumen">{{ post.description }}</p>
+
+          <!-- <div *ngIf="post.comments?.length > 0" class="resenas">
+            <h6><i class="bi bi-chat-left-text-fill"></i> Comentarios del post</h6>
+            <div *ngFor="let c of post.comments" class="resena">
+              <div class="resena-header">
+                <strong>{{c.username}}</strong>
+                <span>{{ c.createdAt | date:'medium' }}</span>
+              </div>
+              <p>{{ c.description }}</p>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- SOLO si el usuario es PROFESSIONAL -->
+    <div *ngIf="role === 'PROFESSIONAL' || role === 'ADMIN'" class="servicios-card" routerLink="/servicioscr">
+      <div class="section-header">
+        <i class="bi bi-heart-pulse-fill"></i>
+        Mis  Servicios
+      </div>
+
+
+      <!-- Recorrer los servicios profesionales -->
+      <div *ngFor="let service of professionalServices" class="servicio">
+        <h5>{{ service.title }}</h5>
+        <p>{{ service.description }}</p>
+        <span class="precio">{{ service.price | currency:'EUR' }}</span><br>
+        <!-- <span class="tax">Esto es el tax: {{ service.tax }}</span> -->
+
+        <!-- Mostrar Reseñas del Servicio -->
+        <!-- <div *ngIf="service.reviews && service.reviews.length > 0" class="reseñas mt-3">
+          <h6><i class="bi bi-star-fill"></i> Reseñas</h6>
+          <div *ngFor="let review of service.reviews" class="resena container gap-2">
+            <div class="resena-header">
+              <strong>{{ review.calification }}</strong><br>
+              <span>{{review.username}} </span>
+              <span>{{ review.createdAt | date:'longDate' }}</span>
+            </div>
+            <p>{{ review.description }}</p>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </div>
+  <button *ngIf="mostrarBotonScroll"
+        class="scroll-top-btn fade-in"
+        (click)="scrollToTop()"
+        title="Volver arriba">
+  <i class="bi bi-arrow-up-circle-fill"></i>
+</button>
+</div>
+
+
+

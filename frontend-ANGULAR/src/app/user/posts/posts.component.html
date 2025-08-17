@@ -1,0 +1,312 @@
+<div class="publicaciones-container">
+  <h2>PUBLICACIONES RECIENTES</h2>
+
+  <!-- ACCIONES -->
+  <div class="acciones-posts">
+    <div class="buscador-posts-con-reset">
+      <div class="buscador-posts">
+        <i class="bi bi-search"></i>
+        <input
+          type="text"
+          placeholder="Buscar publicaciones..."
+          [(ngModel)]="filtroBusqueda"
+          (input)="filtrarPosts()"/>
+      </div>
+      <button class="btn-reset-filtros" (click)="resetearFiltros()" title="Restablecer filtros">
+        <i class="bi bi-arrow-clockwise"></i>
+      </button>
+    </div>
+
+    <div class="selector-cantidad">
+      <i class="bi bi-list-ol"></i>
+      <label for="cantidadSelect">Mostrar:</label>
+      <select id="cantidadSelect" [(ngModel)]="cantidadMostrar" (change)="onCantidadChange()">
+        <option *ngFor="let c of cantidadesDisponibles" [value]="c">{{ c }}</option>
+      </select>
+    </div>
+    <div class="botones-acciones">
+      <button class="btn-secundario" routerLink="/mis-publicaciones">
+        <i class="bi bi-person-lines-fill"></i>
+        Mis publicaciones
+      </button>
+    <button class="btn-publicar" (click)="abrirModalNuevoPost()">
+      <i class="bi bi-plus-circle-fill"></i>
+      Publicar
+    </button>
+  </div>
+</div>
+<!-- LISTA DE POSTS -->
+<div class="posts-grid">
+  <div class="card-post" *ngFor="let post of posts">
+    <!-- Botón fuera del click general -->
+    <button class="btn-report-post" title="Reportar publicación"
+            (click)="abrirModalReportePost(post); $event.stopPropagation()">
+      <i class="bi bi-flag-fill"></i>
+    </button>
+
+    <div (click)="abrirModalDetallePost(post)">
+    <!-- Contenido del post -->
+    <div class="user-info" (click)="verPerfilPublico(post.username); $event.stopPropagation()">
+      <img [src]="getAvatarUrl(post.avatar)" class="avatar" (error)="onImageError($event)" />
+      <span class="username">{{ post.username || 'Usuario' }}</span>
+    </div>
+    <div class="content" [ngClass]="{ 'with-image': post.image }" style="display: flex; flex-direction: column; height: 100%;">
+      <div class="header">
+        <span class="time">{{ post.createdAt | date:'long' }}</span>
+      </div>
+      <div class="post-body" style="flex-grow: 1;">
+        <h4>{{ post.title }}</h4>
+        <p>{{ post.description }}</p>
+        <img *ngIf="post.image" [src]="getImageUrl(post.image)" (error)="onImageError($event)" class="post-image" />
+      </div>
+      <div class="actions">
+        <div class="action-item" title="Me gusta"
+     (click)="toggleLike(post.id); $event.stopPropagation()">
+  <i [class]="likedPosts.has(post.id) ? 'bi bi-hand-thumbs-up-fill' : 'bi bi-hand-thumbs-up'"></i>
+  <span>{{ likesCount[post.id] || 0 }}</span>
+</div>
+        <div class="action-item" title="Comentarios" (click)="abrirModalComentarios(post); $event.stopPropagation()">
+          <i class="bi bi-chat-dots-fill"></i>
+          <span>{{ post.comments?.length || 0 }}</span>
+        </div>
+        <div class="action-item" title="Respuestas a comentarios" (click)="abrirModalComentarios(post); $event.stopPropagation()">
+          <i class="bi bi-arrow-return-right"></i>
+          <span>{{ contarTotalRespuestas(post) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cuando no hay resultados -->
+<div *ngIf="posts.length === 0" class="no-resultados">
+  <i class="bi bi-emoji-frown-fill"></i>
+  <p>No se encontraron publicaciones con el filtro actual.</p>
+</div>
+
+<div class="contenedor-paginacion" *ngIf="totalPaginas > 1">
+  <div class="paginacion">
+    <button (click)="cambiarPagina(-1)" [disabled]="paginaActual === 1">
+      <i class="bi bi-arrow-left-circle-fill"></i> Anterior
+    </button>
+    <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+    <button (click)="cambiarPagina(1)" [disabled]="paginaActual === totalPaginas">
+      Siguiente <i class="bi bi-arrow-right-circle-fill"></i>
+    </button>
+  </div>
+
+  <div class="numeros-pagina">
+    <button *ngFor="let pagina of paginas"
+            (click)="irAPagina(pagina)"
+            [class.activa]="pagina === paginaActual">
+      {{ pagina }}
+    </button>
+  </div>
+</div>
+
+
+
+<!-- MODAL DETALLE POST -->
+<div *ngIf="modalDetallePostVisible && postDetalleSeleccionado" class="modal" (click)="cerrarModalAlFondo($event)">
+  <div class="modal-content modal-detalle-post" (click)="$event.stopPropagation()">
+    <span class="close-btn" (click)="cerrarModalDetallePost()">
+      <i class="bi bi-x-lg"></i>
+    </span>
+
+    <h3 class="modal-titulo">{{ postDetalleSeleccionado.title }}</h3>
+    <p class="modal-fecha"><strong>Fecha:</strong> {{ postDetalleSeleccionado.createdAt | date:'long' }}</p>
+
+    <div class="detalle-wrapper">
+      <div class="detalle-content">
+        <div class="detalle-description">
+          {{ postDetalleSeleccionado.description }}
+        </div>
+        <img *ngIf="postDetalleSeleccionado.image" [src]="getImageUrl(postDetalleSeleccionado.image)" (error)="onImageError($event)" class="detalle-img" />
+      </div>
+    </div>
+
+    <div class="detalle-acciones">
+      <div class="action-item">
+        <i class="bi bi-hand-thumbs-up-fill"></i>
+        <span>{{ likesCount[postDetalleSeleccionado.id] || 0 }} like(s)</span>
+      </div>
+      <div class="action-item">
+        <i class="bi bi-chat-dots-fill"></i>
+        <span>{{ postDetalleSeleccionado.comments?.length || 0 }} comentario(s)</span>
+      </div>
+      <div class="action-item">
+        <i class="bi bi-arrow-return-right"></i>
+        <span>{{ contarTotalRespuestas(postDetalleSeleccionado) }} respuesta(s)</span>
+      </div>
+    </div>
+
+    <button class="btn-comentar" (click)="abrirModalComentarios(postDetalleSeleccionado)">
+      <i class="bi bi-chat-left-dots"></i> Ver comentarios
+    </button>
+  </div>
+</div>
+
+
+  <!-- MODAL NUEVO POST -->
+  <div *ngIf="modalNuevoPost" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" (click)="cerrarModalNuevoPost()">
+        <i class="bi bi-x-lg"></i>
+      </span>
+      <h3>Crear nueva publicación</h3>
+      <div class="form-group">
+        <label for="titulo">Título</label>
+        <input id="titulo" type="text" [(ngModel)]="nuevoPost.title" placeholder="Título del post..." />
+      </div>
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" rows="4" [(ngModel)]="nuevoPost.description" placeholder="¿Qué quieres compartir?"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Selecciona tipo de imagen:</label>
+        <select [(ngModel)]="modoImagen">
+          <option value="url">Desde URL</option>
+          <option value="archivo">Desde archivo</option>
+        </select>
+      </div>
+
+      <div class="form-group" *ngIf="modoImagen === 'url'">
+        <label>Imagen (URL)</label>
+        <input type="text" [(ngModel)]="nuevoPost.image" placeholder="https://..." />
+      </div>
+
+      <div class="form-group" *ngIf="modoImagen === 'archivo'">
+        <label>Imagen (archivo local)</label>
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+      </div>
+
+
+      <button class="btn-publicar-modal" (click)="publicarPost()">
+        <i class="bi bi-send-fill"></i> Publicar
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL COMENTARIOS -->
+  <div *ngIf="modalComentariosVisible && postSeleccionado" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" (click)="cerrarModalComentarios()">
+        <i class="bi bi-x-lg"></i>
+      </span>
+
+      <h3 *ngIf="!mostrandoRespuestas">Comentarios</h3>
+      <h3 *ngIf="mostrandoRespuestas">Respuestas a {{ comentarioSeleccionado?.username || 'Usuario' }}</h3>
+
+      <!-- COMENTARIOS -->
+      <div *ngIf="!mostrandoRespuestas" class="comentarios-scroll">
+        <div class="comentario" *ngFor="let comentario of comentarios">
+          <div class="comentario-header">
+            <strong>{{ comentario.username || 'Usuario' }}</strong>
+          </div>
+          <p>{{ comentario.description }}</p>
+          <div class="comentario-actions">
+            <span><i class="bi bi-hand-thumbs-up"></i> 0</span>
+            <button class="btn-responder" (click)="verRespuestas(comentario)">
+              <i class="bi bi-reply-fill"></i> Responder
+            </button>
+          </div>
+
+          <!-- NUEVO: ÍCONO DE RESPUESTAS -->
+          <div class="respuestas-count" (click)="verRespuestas(comentario)">
+            <i class="bi bi-chat-left-dots-fill"></i>
+            {{ comentario.responseComments?.length || 0 }} respuesta{{ (comentario.responseComments?.length || 0) !== 1 ? 's' : '' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- RESPUESTAS DETALLADAS -->
+      <div *ngIf="mostrandoRespuestas && comentarioSeleccionado" class="respuestas-scroll">
+        <div class="comentario comentario-principal">
+          <div class="comentario-header">
+            <strong>{{ comentarioSeleccionado.username || 'Usuario' }}</strong>
+          </div>
+          <p>{{ comentarioSeleccionado.description }}</p>
+          <div class="comentario-actions">
+            <span><i class="bi bi-hand-thumbs-up"></i> 0</span>
+          </div>
+        </div>
+
+        <div class="respuesta" *ngFor="let respuesta of comentarioSeleccionado.responseComments">
+          <div class="comentario-header">
+            <strong>{{ respuesta.username || 'Usuario' }}</strong>
+          </div>
+          <p>{{ respuesta.description }}</p>
+          <div class="comentario-actions">
+            <span><i class="bi bi-clock"></i> {{ respuesta.createdAt | date:'short' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- INPUT COMENTARIO/RESPUESTA -->
+      <div class="comentar-barra">
+        <input *ngIf="!mostrandoRespuestas"
+               type="text"
+               [(ngModel)]="nuevoComentario"
+               placeholder="Escribe tu comentario..." />
+
+        <input *ngIf="mostrandoRespuestas"
+               type="text"
+               [(ngModel)]="nuevaRespuesta"
+               placeholder="Escribe tu respuesta..." />
+
+        <button class="btn-comentar" (click)="mostrandoRespuestas ? enviarRespuesta() : enviarComentario()">
+          <i class="bi bi-reply-all-fill"></i>
+          {{ mostrandoRespuestas ? 'Responder' : 'Comentar' }}
+        </button>
+      </div>
+
+      <button class="btn-volver" *ngIf="mostrandoRespuestas" (click)="volverAComentarios()">
+        <i class="bi bi-arrow-left-circle"></i> Volver a comentarios
+      </button>
+    </div>
+  </div>
+  <button *ngIf="mostrarBotonScroll"
+        class="scroll-top-btn fade-in"
+        (click)="scrollToTop()"
+        title="Volver arriba">
+  <i class="bi bi-arrow-up-circle-fill"></i>
+</button>
+</div>
+<!-- MODAL REPORTAR POST -->
+<div *ngIf="modalReportePostVisible && postReporteSeleccionado" class="modal-overlay" (click)="cerrarModalReportePost()">
+  <div class="modal-content report-modal animate-scale-in" (click)="$event.stopPropagation()">
+    <span class="close-btn" (click)="cerrarModalReportePost()" title="Cerrar">
+      <i class="bi bi-x-lg"></i>
+    </span>
+
+    <div class="modal-header">
+      <i class="bi bi-flag-fill icon-flag"></i>
+      <h2>Reportar publicación</h2>
+    </div>
+
+    <div class="modal-info">
+      <p><strong>Título:</strong> {{ postReporteSeleccionado.title }}</p>
+      <p><strong>Descripción:</strong> {{ postReporteSeleccionado.description }}</p>
+    </div>
+
+    <div class="form-group">
+      <label for="desc">Descripción del problema:</label>
+      <textarea id="desc" [(ngModel)]="nuevoReportePost.description" rows="4" placeholder="Ej. Contenido ofensivo, lenguaje inapropiado..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="tipo">Motivo del reporte:</label>
+      <select id="tipo" [(ngModel)]="nuevoReportePost.type">
+        <option *ngFor="let tipo of tiposReporte" [value]="tipo">
+          {{ getNombreTipoReporte(tipo) }}
+        </option>
+      </select>
+    </div>
+
+    <button class="btn-reporte" (click)="enviarReportePost()">
+      <i class="bi bi-send-exclamation-fill"></i> Enviar Reporte
+    </button>
+  </div>
+</div>
+
+

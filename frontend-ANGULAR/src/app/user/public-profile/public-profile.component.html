@@ -1,0 +1,87 @@
+<div class="perfil-container" *ngIf="user">
+  <h2 class="title">Perfil de {{ user.first_name }} {{ user.last_name }}</h2>
+
+  <div class="perfil-grid">
+    <div class="perfil-card">
+      <div class="avatar-section">
+        <img [src]="getAvatarUrl(user.avatar)" alt="Avatar del usuario" class="avatar">
+      </div>
+
+      <div class="info-section">
+        <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+        <p><i class="bi bi-person-fill"></i> {{ user.username }}</p>
+        <p><i class="bi bi-envelope-fill"></i> {{ user.email }}</p>
+        <!-- <p><i class="bi bi-telephone-fill"></i> {{ user.number }}</p> -->
+        <p><i class="bi bi-geo-alt-fill"></i> {{ user.address }}</p>
+        <!-- <p><i class="bi bi-award-fill"></i> {{ user.role }}</p> -->
+      </div>
+
+      <div class="descripcion">
+        <p>{{ user.mySelf_description }}</p>
+      </div>
+    </div>
+
+    <div *ngIf="user.role === 'PROFESSIONAL' || user.role === 'ADMIN'" class="resenas-card">
+      <div class="section-header">
+        <i class="bi bi-star-half"></i>
+        Reseñas recibidas
+      </div>
+      <div *ngIf="user.reviews?.length > 0" class="promedio-estrellas">
+  <i class="bi bi-star-fill"></i>
+  Nota media: {{ getAverageRating() | number:'1.1-2' }} / 5
+</div>
+      <div *ngIf="user.reviews?.length === 0">Este usuario aún no tiene reseñas.</div>
+      <div *ngFor="let review of user.reviews" class="resena">
+  <div class="resena-header">
+    <div>
+      <strong>{{ review.username }}</strong>
+      <div class="estrellas">
+        <i *ngFor="let s of [].constructor(getStarCount(review.calification))" class="bi bi-star-fill"></i>
+      </div>
+    </div>
+    <span>{{ review.createdAt | date:'longDate' }}</span>
+  </div>
+  <p>{{ review.description }}</p>
+</div>
+    </div>
+  </div>
+
+  <div class="perfil-grid-secundaria">
+    <div class="posts-card">
+      <div class="section-header">
+        <i class="bi bi-journal-richtext"></i>
+        Publicaciones
+      </div>
+      <div *ngIf="user.posts?.length === 0">No hay publicaciones.</div>
+      <div *ngFor="let post of user.posts" class="post">
+        <img [src]="getImageUrl(post.image)" alt="Imagen del post" (error)="onImageError($event)">
+        <div class="contenido">
+          <h5>{{ post.title }}</h5>
+          <p class="fecha">{{ post.createdAt | date:'longDate' }}</p>
+          <p class="resumen">{{ post.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="user.role === 'PROFESSIONAL' || user.role === 'ADMIN'" class="servicios-card">
+      <div class="section-header">
+        <i class="bi bi-heart-pulse-fill"></i>
+        Servicios ofrecidos
+      </div>
+      <div *ngFor="let service of user.professionalServices" class="servicio" (click)="goToServicio(service.id)">
+  <h5>{{ service.title }}</h5>
+  <p>{{ service.description }}</p>
+  <div class="servicio-footer">
+    <span class="precio">{{ service.price | currency:'EUR' }}</span>
+
+    <!-- Botón SIEMPRE visible -->
+    <button
+      class="btn-add-cart"
+      (click)="addToCart(service)"
+      title="Añadir al carrito"
+    >
+      <i class="bi bi-cart-plus"></i>
+    </button>
+  </div>
+</div>
+

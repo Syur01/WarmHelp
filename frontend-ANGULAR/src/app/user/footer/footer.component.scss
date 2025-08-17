@@ -1,0 +1,133 @@
+$color-bg: #F8F5E9;
+$color-primary: #3A7D44;
+$color-secondary: #9DC08B;
+$color-accent: #DF6D14;
+$color-text: #2B2B2B;
+
+.footer {
+  background-color: $color-primary;
+  color: $color-bg;
+  padding: 3rem 4rem;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 2rem;
+
+    .footer-logo img {
+      max-width: 140px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 3rem;
+      flex-wrap: wrap;
+
+      .link-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+
+        h4 {
+          color: $color-secondary;
+          font-size: 1.1rem;
+          margin-bottom: 0.4rem;
+        }
+
+        a {
+          color: $color-bg;
+          text-decoration: none;
+          font-size: 0.95rem;
+          transition: color 0.3s;
+
+          &:hover {
+            color: $color-accent;
+          }
+        }
+      }
+    }
+  }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 2rem;
+
+    .footer-socials {
+  display: flex;
+  gap: 1rem;
+
+  a {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: $color-secondary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease-in-out;
+    text-decoration: none;
+
+    i {
+      font-size: 1.4rem;
+      color: white;
+      transition: color 0.3s ease-in-out;
+    }
+
+    &:hover {
+      background-color: $color-accent;
+
+      i {
+        color: #fff;
+      }
+    }
+  }
+    }
+
+    .footer-copy {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: $color-bg;
+
+      a {
+        color: $color-bg;
+        text-decoration: underline;
+
+        &:hover {
+          color: $color-accent;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem;
+
+    .footer-top {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+
+      .footer-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+      }
+    }
+
+    .footer-bottom {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  }
+}

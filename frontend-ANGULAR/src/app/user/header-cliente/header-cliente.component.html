@@ -1,0 +1,33 @@
+<main class="main-content">
+<header class="header">
+  <div class="col-6 text-center" routerLink="/">
+    <a class="text-decoration-none d-block" rel="noopener">
+      <img src="/logot.png" alt="logo">
+    </a>
+  </div>
+
+  <!-- Icono menú hamburguesa -->
+  <i [ngClass]="menuOpen ? 'bi bi-x-lg close-menu' : 'bi bi-list menu-toggle'" (click)="toggleMenu()"></i>
+
+  <nav class="nav-container" [ngClass]="{ 'active': menuOpen }">
+    <ng-container *ngIf="isLoggedIn">
+      <a *ngIf="role === 'ADMIN'" routerLink="/app/control-panel" (click)="closeMenu()">Admin Panel</a>
+      <a *ngIf="role === 'CLIENT'" routerLink="/progreso-personal" (click)="closeMenu()">Mi progreso personal</a>
+      <a routerLink="/posts" (click)="closeMenu()">Publicaciones</a>
+      <a routerLink="/chat-gpt" (click)="closeMenu()">AI <i class="bi bi-x-diamond-fill"></i></a>
+      <a routerLink="/mis-incidencias" (click)="closeMenu()"> Mis Incidencias</a>
+      <a *ngIf="hasAdminOrProfessionalRole()" routerLink="/servicioscr" (click)="closeMenu()">Mis Servicios</a>
+
+      <a routerLink="/tienda" (click)="closeMenu()">Tienda</a>
+    </ng-container>
+
+    <div class="user-info" *ngIf="isLoggedIn" routerLink="/perfil" (click)="closeMenu()" style="cursor: pointer;">
+      <span>¡Hola, <span class="username">{{ username }}</span>!</span>
+    </div>
+
+    <button *ngIf="!isLoggedIn" type="button" class="btn-login" routerLink="/login" (click)="closeMenu()">
+      <i class="bi bi-person"></i> Iniciar sesión
+    </button>
+  </nav>
+</header>
+</main>
