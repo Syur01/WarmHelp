@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/messages")
-@CrossOrigin(origins = {"http://localhost:4200", "https://warmhelp-frontend.onrender.com"})
+@CrossOrigin(origins = "https://warmhelp-frontend.onrender.com")
 public class MessageController {
 
     @Autowired

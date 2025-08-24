@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@CrossOrigin(origins = {"http://localhost:4200", "https://warmhelp-frontend.onrender.com"})
+@CrossOrigin(origins = "https://warmhelp-frontend.onrender.com")
 @RestController
 @RequestMapping("/chats")
 public class ChatController {
