@@ -4,10 +4,10 @@ import { Observable } from 'rxjs';
 import { Post } from '../interfaces/post';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PostService {
-  private apiUrl = 'http://localhost:8080/api/posts';
+  private apiUrl = 'https://warmhelp-production.up.railway.app/api/posts';
 
   constructor(private http: HttpClient) {}
 
@@ -23,7 +23,10 @@ export class PostService {
   }): Observable<Post> {
     return this.http.post<Post>(`${this.apiUrl}/registerPost`, post);
   }
-  updatePost(id: number, post: { title: string; description: string; image?: string }): Observable<Post> {
+  updatePost(
+    id: number,
+    post: { title: string; description: string; image?: string }
+  ): Observable<Post> {
     return this.http.post<Post>(`${this.apiUrl}/${id}/update`, post);
   }
 
@@ -42,7 +45,9 @@ export class PostService {
     formData.append('username', userName);
     formData.append('image', image);
 
-    return this.http.post(`${this.apiUrl}/uploadPostWithImage`, formData, { responseType: 'text' });
+    return this.http.post(`${this.apiUrl}/uploadPostWithImage`, formData, {
+      responseType: 'text',
+    });
   }
   createPostImage(
     title: string,
@@ -58,5 +63,4 @@ export class PostService {
 
     return this.http.post(`${this.apiUrl}/uploadPostWithImage`, formData);
   }
-
 }

@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class ProfessionalService {
-  private apiUrl = 'http://localhost:8080/api/professionalServices';
+  private apiUrl = 'https://warmhelp-production.up.railway.app/api/professionalServices';
 
   constructor(private http: HttpClient) {}
 

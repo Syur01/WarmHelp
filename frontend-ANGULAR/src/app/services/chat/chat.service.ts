@@ -10,9 +10,10 @@ import SockJS from 'sockjs-client';
   providedIn: 'root',
 })
 export class ChatService {
-  private REST_URL = 'http://localhost:8080/api/chats';
-  private MESSAGE_URL = 'http://localhost:8080/api/messages';
-  private socketUrl = 'http://localhost:8080/api/chat';
+  private REST_URL = 'https://warmhelp-production.up.railway.app/api/chats';
+  private MESSAGE_URL =
+    'https://warmhelp-production.up.railway.app/api/messages';
+  private socketUrl = 'https://warmhelp-production.up.railway.app/api/chat';
 
   private stompClient: Client | null = null;
 
@@ -41,8 +42,10 @@ export class ChatService {
     return this.http.post<Chat>(this.REST_URL, chat);
   }
   deleteChat(chatId: number, username: string): Observable<void> {
-  return this.http.delete<void>(`${this.REST_URL}/${chatId}?username=${username}`);
-}
+    return this.http.delete<void>(
+      `${this.REST_URL}/${chatId}?username=${username}`
+    );
+  }
 
   sendMessageREST(chatId: number, message: Message): Observable<Chat> {
     return this.http.post<Chat>(`${this.REST_URL}/${chatId}/messages`, message);
@@ -108,70 +111,68 @@ export class ChatService {
     });
   }
   subscribeToChatDeletion(chatId: number): Observable<number> {
-  return new Observable<number>((subscriber) => {
-    if (!this.stompClient) {
-      subscriber.error('STOMP client no conectado');
-      return;
-    }
-
-    let stompSubscription: any;
-
-    const waitForConnection = () => {
-      if (this.stompClient && this.stompClient.connected) {
-        stompSubscription = this.stompClient.subscribe(
-          `/topic/chat.deleted.${chatId}`,
-          (msg) => {
-            const deletedChatId = Number(msg.body);
-            subscriber.next(deletedChatId);
-          }
-        );
-      } else {
-        setTimeout(waitForConnection, 100);
+    return new Observable<number>((subscriber) => {
+      if (!this.stompClient) {
+        subscriber.error('STOMP client no conectado');
+        return;
       }
-    };
 
-    waitForConnection();
+      let stompSubscription: any;
 
-    // Cleanup al desuscribirse
-    return () => {
-      if (stompSubscription) {
-        stompSubscription.unsubscribe();
+      const waitForConnection = () => {
+        if (this.stompClient && this.stompClient.connected) {
+          stompSubscription = this.stompClient.subscribe(
+            `/topic/chat.deleted.${chatId}`,
+            (msg) => {
+              const deletedChatId = Number(msg.body);
+              subscriber.next(deletedChatId);
+            }
+          );
+        } else {
+          setTimeout(waitForConnection, 100);
+        }
+      };
+
+      waitForConnection();
+
+      // Cleanup al desuscribirse
+      return () => {
+        if (stompSubscription) {
+          stompSubscription.unsubscribe();
+        }
+      };
+    });
+  }
+  subscribeToGlobalChatDeletion(): Observable<number> {
+    return new Observable<number>((subscriber) => {
+      if (!this.stompClient) {
+        subscriber.error('STOMP client no conectado');
+        return;
       }
-    };
-  });
-}
-subscribeToGlobalChatDeletion(): Observable<number> {
-  return new Observable<number>((subscriber) => {
-    if (!this.stompClient) {
-      subscriber.error('STOMP client no conectado');
-      return;
-    }
 
-    let stompSubscription: any;
+      let stompSubscription: any;
 
-    const waitForConnection = () => {
-      if (this.stompClient && this.stompClient.connected) {
-        stompSubscription = this.stompClient.subscribe(
-          `/topic/chat.deleted`,
-          (msg) => {
-            const deletedChatId = Number(msg.body);
-            subscriber.next(deletedChatId);
-          }
-        );
-      } else {
-        setTimeout(waitForConnection, 100);
-      }
-    };
+      const waitForConnection = () => {
+        if (this.stompClient && this.stompClient.connected) {
+          stompSubscription = this.stompClient.subscribe(
+            `/topic/chat.deleted`,
+            (msg) => {
+              const deletedChatId = Number(msg.body);
+              subscriber.next(deletedChatId);
+            }
+          );
+        } else {
+          setTimeout(waitForConnection, 100);
+        }
+      };
 
-    waitForConnection();
+      waitForConnection();
 
-    return () => {
-      if (stompSubscription) {
-        stompSubscription.unsubscribe();
-      }
-    };
-  });
-}
-
-
+      return () => {
+        if (stompSubscription) {
+          stompSubscription.unsubscribe();
+        }
+      };
+    });
+  }
 }

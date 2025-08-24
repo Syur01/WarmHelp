@@ -9,10 +9,11 @@ export interface ResponseCommentRequest {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ResponseCommentsService {
-  private apiUrl = 'http://localhost:8080/api/responseComments';
+  private apiUrl =
+    'https://warmhelp-production.up.railway.app/api/responseComments';
 
   constructor(private http: HttpClient) {}
 

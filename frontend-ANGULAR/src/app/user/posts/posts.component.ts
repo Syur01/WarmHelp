@@ -2,8 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { UseStateService } from '../../services/auth/use-state.service';
 import { Post } from '../../services/interfaces/post';
 import { PostService } from '../../services/posts/post.service';
-import { CommentRequest, CommentService } from '../../services/posts/comment.service';
-import { ResponseCommentsService, ResponseCommentRequest } from '../../services/posts/response-comments.service';
+import {
+  CommentRequest,
+  CommentService,
+} from '../../services/posts/comment.service';
+import {
+  ResponseCommentsService,
+  ResponseCommentRequest,
+} from '../../services/posts/response-comments.service';
 import { ResponseComment } from '../../services/interfaces/response-coment';
 import { PopupService } from '../../services/popup.service';
 import { delay } from 'rxjs';
@@ -16,7 +22,7 @@ import { environment } from '../../../environments/environment';
   selector: 'app-posts',
   standalone: false,
   templateUrl: './posts.component.html',
-  styleUrl: './posts.component.scss'
+  styleUrl: './posts.component.scss',
 })
 export class PostsComponent implements OnInit {
   // Estado de posts y paginación
@@ -54,27 +60,27 @@ export class PostsComponent implements OnInit {
   modalReportePostVisible = false;
   postReporteSeleccionado: Post | null = null;
   nuevoReportePost = {
-  description: '',
-  type: 'FALSE_INFORMATION',
-  postId: 0
-};
+    description: '',
+    type: 'FALSE_INFORMATION',
+    postId: 0,
+  };
 
-tiposReporte: string[] = [
-  'BULLYING_OR_HARASSMENT',
-  'SUICIDE_SELF_INJURY_OR_EATING_DISORDERS',
-  'VIOLENCE',
-  'ILLEGAL_SALES',
-  'NUDITY_OR_SEXUAL_ACTIVITY',
-  'SCAMS_FRAUD_OR_SPAM',
-  'FALSE_INFORMATION'
-];
+  tiposReporte: string[] = [
+    'BULLYING_OR_HARASSMENT',
+    'SUICIDE_SELF_INJURY_OR_EATING_DISORDERS',
+    'VIOLENCE',
+    'ILLEGAL_SALES',
+    'NUDITY_OR_SEXUAL_ACTIVITY',
+    'SCAMS_FRAUD_OR_SPAM',
+    'FALSE_INFORMATION',
+  ];
 
   // Nuevo post
   nuevoPost = {
     title: '',
     description: '',
     image: '',
-    userName: ''
+    userName: '',
   };
 
   constructor(
@@ -89,7 +95,8 @@ tiposReporte: string[] = [
   ) {}
 
   ngOnInit(): void {
-    this.cantidadMostrar = Number(localStorage.getItem('cantidadMostrar')) || 10;
+    this.cantidadMostrar =
+      Number(localStorage.getItem('cantidadMostrar')) || 10;
     this.nuevoPost.userName = this.useStateService.getUsername() || 'anon';
     this.cargarPosts();
     window.addEventListener('scroll', this.verificarScroll.bind(this));
@@ -111,7 +118,7 @@ tiposReporte: string[] = [
     this.nuevoReportePost = {
       description: '',
       type: 'FALSE_INFORMATION',
-      postId: post.id
+      postId: post.id,
     };
     this.modalReportePostVisible = true;
   }
@@ -125,14 +132,16 @@ tiposReporte: string[] = [
     if (!imagePath || typeof imagePath !== 'string') return '';
     const trimmed = imagePath.trim();
     if (trimmed.startsWith('http')) return trimmed;
-    return `http://localhost:8080/api/uploads/images/${encodeURIComponent(trimmed)}`;
+    return `https://warmhelp-production.up.railway.app/api/uploads/images/${encodeURIComponent(
+      trimmed
+    )}`;
   }
   getAvatarUrl(avatarPath: string | undefined): string {
-  if (!avatarPath) return '/ken.gif';
-  return avatarPath.startsWith('http')
-    ? avatarPath
-    : `${environment.apiUrl}${avatarPath}`;
-}
+    if (!avatarPath) return '/ken.gif';
+    return avatarPath.startsWith('http')
+      ? avatarPath
+      : `${environment.apiUrl}${avatarPath}`;
+  }
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
     if (!img.src.includes('image-not-found.jpg')) {
@@ -146,7 +155,7 @@ tiposReporte: string[] = [
     this.nuevoReportePost = {
       description: '',
       type: 'FALSE_INFORMATION',
-      postId: 0
+      postId: 0,
     };
   }
 
@@ -158,7 +167,7 @@ tiposReporte: string[] = [
       ILLEGAL_SALES: 'Ventas ilegales',
       NUDITY_OR_SEXUAL_ACTIVITY: 'Contenido sexual',
       SCAMS_FRAUD_OR_SPAM: 'Estafa o fraude',
-      FALSE_INFORMATION: 'Información falsa'
+      FALSE_INFORMATION: 'Información falsa',
     };
     return map[tipo] || tipo;
   }
@@ -169,20 +178,27 @@ tiposReporte: string[] = [
 
     const payload = {
       ...this.nuevoReportePost,
-      userName: username
+      userName: username,
     };
 
     this.reportService.createPostReport(payload).subscribe({
       next: () => {
-        this.popupService.showMessage('Reporte enviado', 'Gracias por tu reporte, lo revisaremos.', 'success');
+        this.popupService.showMessage(
+          'Reporte enviado',
+          'Gracias por tu reporte, lo revisaremos.',
+          'success'
+        );
         this.cerrarModalReportePost();
       },
-      error: err => {
-        this.popupService.showMessage('Error', 'No se pudo enviar el reporte', 'error');
-      }
+      error: (err) => {
+        this.popupService.showMessage(
+          'Error',
+          'No se pudo enviar el reporte',
+          'error'
+        );
+      },
     });
   }
-
 
   detectarEscape(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
@@ -198,20 +214,19 @@ tiposReporte: string[] = [
     this.cerrarModalComentarios();
   }
 
-
   // --- Manejo de posts ---
   cargarPosts(preservarPagina: boolean = false): void {
     this.postService.getAllPosts().subscribe({
-      next: posts => {
+      next: (posts) => {
         this.allPosts = posts.reverse();
         const userId = this.useStateService.getUserId();
-        posts.forEach(post => {
-          this.likeService.countLikes(post.id).subscribe(count => {
+        posts.forEach((post) => {
+          this.likeService.countLikes(post.id).subscribe((count) => {
             this.likesCount[post.id] = count;
           });
 
           if (userId) {
-            this.likeService.isLiked(post.id, userId).subscribe(isLiked => {
+            this.likeService.isLiked(post.id, userId).subscribe((isLiked) => {
               if (isLiked) this.likedPosts.add(post.id);
             });
           }
@@ -220,7 +235,7 @@ tiposReporte: string[] = [
         if (!preservarPagina) this.paginaActual = 1;
         this.actualizarLista();
       },
-      error: err => console.error('Error al cargar posts:', err)
+      error: (err) => console.error('Error al cargar posts:', err),
     });
   }
 
@@ -228,7 +243,7 @@ tiposReporte: string[] = [
     const userId = this.useStateService.getUserId();
     if (!userId) return;
 
-    this.likeService.toggleLike(postId, userId).subscribe(response => {
+    this.likeService.toggleLike(postId, userId).subscribe((response) => {
       if (response.liked) {
         this.likedPosts.add(postId);
       } else {
@@ -240,13 +255,17 @@ tiposReporte: string[] = [
   actualizarLista(): void {
     const filtro = this.filtroBusqueda.toLowerCase().trim();
 
-    const postsFiltrados = this.allPosts.filter(p =>
-      p.title.toLowerCase().includes(filtro) ||
-      p.description.toLowerCase().includes(filtro) ||
-      p.username.toLowerCase().includes(filtro)
+    const postsFiltrados = this.allPosts.filter(
+      (p) =>
+        p.title.toLowerCase().includes(filtro) ||
+        p.description.toLowerCase().includes(filtro) ||
+        p.username.toLowerCase().includes(filtro)
     );
 
-    this.totalPaginas = Math.max(1, Math.ceil(postsFiltrados.length / this.cantidadMostrar));
+    this.totalPaginas = Math.max(
+      1,
+      Math.ceil(postsFiltrados.length / this.cantidadMostrar)
+    );
     this.paginas = Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
 
     // Evitar desbordamiento de página
@@ -261,9 +280,6 @@ tiposReporte: string[] = [
     this.posts = postsFiltrados.slice(inicio, fin);
   }
 
-
-
-
   resetearFiltros(): void {
     this.filtroBusqueda = '';
     this.cantidadMostrar = 10;
@@ -271,7 +287,6 @@ tiposReporte: string[] = [
     this.paginaActual = 1;
     this.actualizarLista();
   }
-
 
   filtrarPosts(): void {
     this.paginaActual = 1;
@@ -290,8 +305,6 @@ tiposReporte: string[] = [
     }
   }
 
-
-
   cambiarPagina(valor: number): void {
     const nuevaPagina = this.paginaActual + valor;
     if (nuevaPagina >= 1 && nuevaPagina <= this.totalPaginas) {
@@ -307,7 +320,6 @@ tiposReporte: string[] = [
     }
   }
 
-
   // --- Publicar post ---
   abrirModalNuevoPost(): void {
     this.modalNuevoPost = true;
@@ -319,7 +331,7 @@ tiposReporte: string[] = [
       title: '',
       description: '',
       image: '',
-      userName: this.useStateService.getUsername() || 'anon'
+      userName: this.useStateService.getUsername() || 'anon',
     };
   }
 
@@ -332,25 +344,38 @@ tiposReporte: string[] = [
 
     this.popupService.loader('Publicando...', 'Esto puede tardar un poco');
 
-    const obs = this.modoImagen === 'archivo' && this.imagenSeleccionada
-      ? this.postService.createPostWithImage(title, description, userName, this.imagenSeleccionada)
-      : this.postService.createPost(this.nuevoPost);
+    const obs =
+      this.modoImagen === 'archivo' && this.imagenSeleccionada
+        ? this.postService.createPostWithImage(
+            title,
+            description,
+            userName,
+            this.imagenSeleccionada
+          )
+        : this.postService.createPost(this.nuevoPost);
 
     obs.pipe(delay(200)).subscribe({
       next: () => {
         this.popupService.close();
-        this.popupService.showMessage('Publicación subida', '¡Tu publicación ha sido subida exitosamente!', 'success');
+        this.popupService.showMessage(
+          'Publicación subida',
+          '¡Tu publicación ha sido subida exitosamente!',
+          'success'
+        );
         this.cerrarModalNuevoPost();
         this.cargarPosts();
         this.imagenSeleccionada = null;
       },
-      error: err => {
+      error: (err) => {
         const mensaje = err.error?.message || JSON.stringify(err.error);
-        this.popupService.showMessage('Error de publicación', 'ERROR: ' + mensaje, 'error');
-      }
+        this.popupService.showMessage(
+          'Error de publicación',
+          'ERROR: ' + mensaje,
+          'error'
+        );
+      },
     });
   }
-
 
   // --- Comentarios ---
   abrirModalComentarios(post: Post): void {
@@ -377,7 +402,7 @@ tiposReporte: string[] = [
     const comentario: CommentRequest = {
       description: this.nuevoComentario.trim(),
       userName: this.useStateService.getUsername() || 'anon',
-      postId: this.postSeleccionado.id
+      postId: this.postSeleccionado.id,
     };
 
     this.commentService.createComment(comentario).subscribe({
@@ -385,13 +410,15 @@ tiposReporte: string[] = [
         this.nuevoComentario = '';
         this.cargarPosts(true); // <- Aquí se mantiene la página actual
         setTimeout(() => {
-          const actualizado = this.allPosts.find(p => p.id === this.postSeleccionado?.id);
+          const actualizado = this.allPosts.find(
+            (p) => p.id === this.postSeleccionado?.id
+          );
           if (actualizado) {
             this.postSeleccionado = actualizado;
             this.comentarios = actualizado.comments || [];
           }
         }, 300);
-      }
+      },
     });
   }
 
@@ -400,9 +427,11 @@ tiposReporte: string[] = [
     this.comentarioSeleccionado = comentario;
     this.mostrandoRespuestas = true;
     this.responseCommentsService.getAllResponseComments().subscribe({
-      next: respuestas => {
-        this.respuestas = respuestas.filter(r => r.commentId === comentario.id);
-      }
+      next: (respuestas) => {
+        this.respuestas = respuestas.filter(
+          (r) => r.commentId === comentario.id
+        );
+      },
     });
   }
 
@@ -412,22 +441,22 @@ tiposReporte: string[] = [
     const respuesta: ResponseCommentRequest = {
       description: this.nuevaRespuesta.trim(),
       userName: this.useStateService.getUsername() || 'anon',
-      commentId: this.comentarioSeleccionado.id
+      commentId: this.comentarioSeleccionado.id,
     };
 
     this.responseCommentsService.createResponseComment(respuesta).subscribe({
-      next: nueva => {
+      next: (nueva) => {
         this.respuestas.push(nueva);
         this.comentarioSeleccionado.responseComments = [
           ...(this.comentarioSeleccionado.responseComments || []),
-          nueva
+          nueva,
         ];
         this.nuevaRespuesta = '';
       },
-      error: err => {
+      error: (err) => {
         console.error('Error al enviar respuesta:', err);
         alert('❌ Hubo un problema al guardar tu respuesta');
-      }
+      },
     });
   }
 
@@ -450,8 +479,10 @@ tiposReporte: string[] = [
   }
 
   contarTotalRespuestas(post: Post): number {
-    return post.comments?.reduce((total, comment: any) => {
-      return total + (comment.responseComments?.length || 0);
-    }, 0) || 0;
+    return (
+      post.comments?.reduce((total, comment: any) => {
+        return total + (comment.responseComments?.length || 0);
+      }, 0) || 0
+    );
   }
 }

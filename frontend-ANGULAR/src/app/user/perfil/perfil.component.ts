@@ -12,7 +12,7 @@ import { environment } from '../../../environments/environment';
   selector: 'app-perfil',
   standalone: false,
   templateUrl: './perfil.component.html',
-  styleUrls: ['./perfil.component.scss']
+  styleUrls: ['./perfil.component.scss'],
 })
 export class PerfilComponent implements OnInit {
   username: string | null = null;
@@ -51,7 +51,7 @@ export class PerfilComponent implements OnInit {
     address: '',
     number: '',
     email: '',
-    mySelf_description: ''
+    mySelf_description: '',
   };
 
   constructor(
@@ -77,8 +77,8 @@ export class PerfilComponent implements OnInit {
     this.responseComments = this.useStateService.getResponseComments();
     this.professionalServices = this.useStateService.getProfessionalServices();
     const services = this.useStateService.getProfessionalServices() || [];
-this.professionalServices = services;
-this.reviews = services.flatMap((s: any) => s.reviews || []);
+    this.professionalServices = services;
+    this.reviews = services.flatMap((s: any) => s.reviews || []);
     this.avatar = this.buildAvatarUrl(this.useStateService.getAvatar());
     window.addEventListener('scroll', this.verificarScroll.bind(this));
   }
@@ -103,7 +103,9 @@ this.reviews = services.flatMap((s: any) => s.reviews || []);
     if (!imagePath || typeof imagePath !== 'string') return '';
     const trimmed = imagePath.trim();
     if (trimmed.startsWith('http')) return trimmed;
-    return `http://localhost:8080/api/uploads/images/${encodeURIComponent(trimmed)}`;
+    return `https://warmhelp-production.up.railway.app/api/uploads/images/${encodeURIComponent(
+      trimmed
+    )}`;
   }
 
   onImageError(event: Event): void {
@@ -113,16 +115,21 @@ this.reviews = services.flatMap((s: any) => s.reviews || []);
     }
   }
   getStarCount(calification: string): number {
-  switch (calification) {
-    case 'EXCELENTE': return 5;
-    case 'BUENO': return 4;
-    case 'REGULAR': return 3;
-    case 'MALO': return 2;
-    case 'PESIMO': return 1;
-    default: return 0;
+    switch (calification) {
+      case 'EXCELENTE':
+        return 5;
+      case 'BUENO':
+        return 4;
+      case 'REGULAR':
+        return 3;
+      case 'MALO':
+        return 2;
+      case 'PESIMO':
+        return 1;
+      default:
+        return 0;
+    }
   }
-}
-
 
   cancelPasswordChange() {
     this.oldPassword = '';
@@ -145,39 +152,59 @@ this.reviews = services.flatMap((s: any) => s.reviews || []);
     this.credentialsService.uploadAvatar(userId, formData).subscribe({
       next: (res) => {
         this.avatar = this.buildAvatarUrl(res.avatar);
-this.useStateService.setAvatar(res.avatar);
-        this.popupService.showMessage('Éxito', 'Avatar actualizado correctamente', 'success');
+        this.useStateService.setAvatar(res.avatar);
+        this.popupService.showMessage(
+          'Éxito',
+          'Avatar actualizado correctamente',
+          'success'
+        );
       },
       error: () => {
-        this.popupService.showMessage('Error', 'No se pudo actualizar el avatar', 'error');
-      }
+        this.popupService.showMessage(
+          'Error',
+          'No se pudo actualizar el avatar',
+          'error'
+        );
+      },
     });
   }
   private buildAvatarUrl(avatarPath: string | null): string | null {
-  if (!avatarPath) return null;
-  return avatarPath.startsWith('http')
-    ? avatarPath
-    : `${environment.apiUrl}${avatarPath}`;
-}
+    if (!avatarPath) return null;
+    return avatarPath.startsWith('http')
+      ? avatarPath
+      : `${environment.apiUrl}${avatarPath}`;
+  }
   onChangePassword() {
     if (this.newPassword !== this.repeatNewPassword) {
       this.passwordError = true;
-      this.popupService.showMessage('Error', 'Las nuevas contraseñas no coinciden', 'error');
+      this.popupService.showMessage(
+        'Error',
+        'Las nuevas contraseñas no coinciden',
+        'error'
+      );
       return;
     }
 
     if (this.oldPassword === this.newPassword) {
       this.passwordError = true;
-      this.popupService.showMessage('Error', 'La nueva contraseña no puede ser igual a la actual', 'error');
+      this.popupService.showMessage(
+        'Error',
+        'La nueva contraseña no puede ser igual a la actual',
+        'error'
+      );
       return;
     }
 
     this.passwordError = false;
 
-    this.credentialsService.changePassword(this.oldPassword, this.newPassword, this.username!)
+    this.credentialsService
+      .changePassword(this.oldPassword, this.newPassword, this.username!)
       .subscribe({
         next: (res) => {
-          const message = typeof res === 'string' ? res : res?.message || 'Contraseña actualizada correctamente';
+          const message =
+            typeof res === 'string'
+              ? res
+              : res?.message || 'Contraseña actualizada correctamente';
           this.popupService.showMessage('Éxito', message, 'success');
           this.cancelPasswordChange();
         },
@@ -188,7 +215,7 @@ this.useStateService.setAvatar(res.avatar);
               : err.error?.message || 'Error al cambiar la contraseña';
 
           this.popupService.showMessage('Error', errorMessage, 'error');
-        }
+        },
       });
   }
 
@@ -210,7 +237,11 @@ this.useStateService.setAvatar(res.avatar);
         this.popupService.close();
       }, 750);
     } else {
-      this.popupService.showMessage('Cancelado', 'Tu sesión sigue activa', 'info');
+      this.popupService.showMessage(
+        'Cancelado',
+        'Tu sesión sigue activa',
+        'info'
+      );
     }
   }
 
@@ -223,7 +254,7 @@ this.useStateService.setAvatar(res.avatar);
       address: this.address!,
       number: this.number!,
       email: this.email!,
-      mySelf_description: this.mySelf_description!
+      mySelf_description: this.mySelf_description!,
     };
     this.showEditModal = true;
   }
@@ -236,20 +267,28 @@ this.useStateService.setAvatar(res.avatar);
     const userId = this.useStateService.getUserId();
 
     if (!userId) {
-      this.popupService.showMessage('Error', 'No se pudo obtener el ID del usuario', 'error');
+      this.popupService.showMessage(
+        'Error',
+        'No se pudo obtener el ID del usuario',
+        'error'
+      );
       return;
     }
 
     this.credentialsService.updateProfileById(userId, this.editData).subscribe({
       next: (updated) => {
-        this.popupService.showMessage('Éxito', 'Perfil actualizado correctamente', 'success');
+        this.popupService.showMessage(
+          'Éxito',
+          'Perfil actualizado correctamente',
+          'success'
+        );
 
         const currentSession = this.useStateService.getSession();
 
         const newSession = {
           ...currentSession,
           ...updated,
-          avatar: currentSession.avatar // <- MANTENER avatar actual
+          avatar: currentSession.avatar, // <- MANTENER avatar actual
         };
 
         this.useStateService.save(newSession);
@@ -266,13 +305,12 @@ this.useStateService.setAvatar(res.avatar);
         this.closeEditModal();
       },
       error: (err) => {
-        this.popupService.showMessage('Error', err?.error?.message || 'Error al actualizar el perfil', 'error');
-      }
+        this.popupService.showMessage(
+          'Error',
+          err?.error?.message || 'Error al actualizar el perfil',
+          'error'
+        );
+      },
     });
   }
-
-
-
-
-
 }
