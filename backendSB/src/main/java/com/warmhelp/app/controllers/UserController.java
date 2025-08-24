@@ -182,7 +182,7 @@ public class UserController {
     public ResponseEntity<?> uploadAvatar(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         try {
             String avatarUrl = userService.saveUserAvatar(id, file);
-            String fullUrl = "http://localhost:8080/api" + avatarUrl;
+            String fullUrl = "https://warmhelp-production.up.railway.app/api" + avatarUrl;
             return ResponseEntity.ok(Map.of("avatar", fullUrl));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));

@@ -32,7 +32,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        config.addAllowedOrigin("http://localhost:4200");
+//        config.addAllowedOrigin("http://localhost:4200");
+        config.addAllowedOrigin("https://warmhelp-front.onrender.com");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setAllowCredentials(true);
