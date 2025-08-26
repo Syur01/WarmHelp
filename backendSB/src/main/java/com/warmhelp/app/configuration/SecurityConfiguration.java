@@ -148,9 +148,10 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean<CorsFilter> corsFilterRegistration(CorsConfigurationSource source) {
-        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+    public FilterRegistrationBean<CorsFilter> corsFilterRegistration() {
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource()));
         bean.setOrder(-102); // Se ejecuta antes que Spring Security
         return bean;
     }
+
 }
