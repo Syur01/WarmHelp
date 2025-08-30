@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class EmailServiceImpl implements IEmailService{
 
-    @Value("${email.sender}")
+    @Value("${spring.mail.username}")
     private String emailUser;
 
     @Autowired
