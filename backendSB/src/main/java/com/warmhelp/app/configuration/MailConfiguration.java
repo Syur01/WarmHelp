@@ -23,14 +23,15 @@ public class MailConfiguration {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
         mailSender.setHost("smtp-relay.brevo.com");
-        mailSender.setPort(587);
+        mailSender.setPort(465);
         mailSender.setUsername(emailUser);
         mailSender.setPassword(password);
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
+//        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.ssl.enable", "true");
+        props.put("mail.smtp.starttls.enable", "false");
         props.put("mail.debug", "true");
 
         return mailSender;
