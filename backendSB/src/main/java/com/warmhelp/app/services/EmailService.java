@@ -8,14 +8,16 @@ import java.util.*;
 @Service
 public class EmailService {
 
-    private final String apiKey = System.getenv("BREVO_API_KEY"); // definir en Railway
+    private final String apiKey = System.getenv("BREVO_API_KEY"); // API Key de Brevo
+    private final String fromEmail = System.getenv("FROM_EMAIL"); // Email remitente
     private final RestTemplate restTemplate = new RestTemplate();
 
     public void sendEmail(String[] toEmails, String subject, String htmlContent) {
         String url = "https://api.brevo.com/v3/smtp/email";
 
         Map<String, Object> body = new HashMap<>();
-        body.put("sender", Map.of("email", "tu-correo@tudominio.com")); // cambia al email de remitente
+        body.put("sender", Map.of("email", fromEmail));
+
         List<Map<String, String>> toList = new ArrayList<>();
         for (String to : toEmails) {
             toList.add(Map.of("email", to));
@@ -33,4 +35,3 @@ public class EmailService {
         restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
     }
 }
-
