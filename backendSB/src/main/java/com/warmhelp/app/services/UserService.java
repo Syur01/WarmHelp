@@ -167,15 +167,14 @@ public class UserService implements UserDetailsService {
         tokenRepository.save(verificationToken);
 
         // 📧 Enviar email de verificación
-        String url = "https://warmhelp-front.onrender.com/verify?token=" + verificationToken.getToken(); // reemplaza con URL real del frontend localhost:4200
+        String url = "https://warmhelp-front.onrender.com/verify?token=" + verificationToken.getToken();
         String subject = "Verifica tu cuenta";
-        String message = "Hola " + userInfo.getFirst_name() + ",\n\n"
-                + "Gracias por registrarte en WarmHelp. Por favor verifica tu cuenta haciendo clic en el siguiente enlace:\n\n"
-                + url + "\n\n"
-                + "Este enlace expirará en 24 horas.";
+        String message = "<p>Hola " + userInfo.getFirst_name() + ",</p>"
+                + "<p>Gracias por registrarte en WarmHelp. Por favor verifica tu cuenta haciendo clic en el siguiente enlace:</p>"
+                + "<p><a href=\"" + url + "\">Verificar cuenta</a></p>"
+                + "<p>Este enlace expirará en 24 horas.</p>";
 
         emailService.sendEmail(new String[]{userInfo.getEmail()}, subject, message);
-
         return user;
     }
 
