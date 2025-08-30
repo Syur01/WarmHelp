@@ -22,7 +22,7 @@ public class MailConfiguration {
 
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
-        mailSender.setHost("smtp.gmail.com");
+        mailSender.setHost("smtp-relay.brevo.com");
         mailSender.setPort(587);
         mailSender.setUsername(emailUser);
         mailSender.setPassword(password);
