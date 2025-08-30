@@ -1,6 +1,5 @@
 {
-  "root": "dist/frontend-angular",
-  "routes": {
-    "/**": "index.html"
-  }
+  "routes": [
+    { "src": ".*", "dest": "/index.html" }
+  ]
 }
