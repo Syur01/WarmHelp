@@ -26,14 +26,16 @@ import java.util.stream.Collectors;
 @Service
 public class PostsService {
 
+    private final CloudinaryService cloudinaryService;
     private final PostsRepository postsRepository;
     private final UserRepository userRepository;
     private final UserInfoRepository userInfoRepository;
 
-    public PostsService(PostsRepository postsRepository, UserRepository userRepository, UserInfoRepository userInfoRepository) {
+    public PostsService(CloudinaryService cloudinaryService, PostsRepository postsRepository, UserRepository userRepository, UserInfoRepository userInfoRepository) {
         this.postsRepository = postsRepository;
         this.userRepository = userRepository;
         this.userInfoRepository = userInfoRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     public List<PostsResponseDTO> getAllPosts(){
@@ -144,33 +146,27 @@ public class PostsService {
             throw new IllegalArgumentException("Post ya existe");
         }
 
-        String imageName = null;
         try {
-            if (!image.isEmpty()){
-                String uploadDir = "uploads/images/";
-                Files.createDirectories(Paths.get(uploadDir));
-                String originalName = image.getOriginalFilename();
-                String cleanedName = originalName != null
-                        ? originalName.replaceAll("[^a-zA-Z0-9._-]", "_")
-                        : "image";
+            String imageUrl = null;
 
-                imageName = System.currentTimeMillis() + "_" + cleanedName;
-                Path filePath = Paths.get(uploadDir, imageName);
-                image.transferTo(filePath);
+            if (image != null && !image.isEmpty()) {
+                // ✅ Subida a Cloudinary
+                imageUrl = cloudinaryService.uploadPostFile(image);
             }
-        } catch (IOException e){
-            return ResponseEntity.status(500).body("error al guardar la imagen");
+
+            Posts post = new Posts();
+            post.setTitle(title);
+            post.setDescription(description);
+            post.setImage(imageUrl); // ✅ Guardamos URL de Cloudinary
+            post.setUserInfo(userInfo);
+
+            postsRepository.save(post);
+            return ResponseEntity.ok(post); // Devolvemos el post con URL lista
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al subir imagen: " + e.getMessage());
         }
-
-        Posts post = new Posts();
-        post.setTitle(title);
-        post.setDescription(description);
-        post.setImage(imageName);
-        post.setUserInfo(userInfo);
-
-        postsRepository.save(post);
-        return ResponseEntity.ok("Post Creado Correctamente");
     }
+
 
     @Transactional
     public Posts updatePost(Long id, UpdatePostRequest request){

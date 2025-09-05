@@ -24,4 +24,12 @@ public class CloudinaryService {
         );
         return uploadResult.get("secure_url").toString();
     }
+
+    public String uploadPostFile(MultipartFile file) throws IOException {
+        Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                ObjectUtils.asMap(
+                        "folder", "warmhelp/posts" // carpeta separada para posts
+                ));
+        return uploadResult.get("secure_url").toString();
+    }
 }
