@@ -187,9 +187,7 @@ public class UserController {
     @PostMapping("/{id}/upload-avatar")
     public ResponseEntity<?> uploadAvatar(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         try {
-            // Llamada CORRECTA (no estática)
             String imageUrl = cloudinaryService.uploadFile(file);
-
             UserInfo userInfo = userInfoRepository.findByUserId(id)
                     .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
@@ -198,8 +196,9 @@ public class UserController {
 
             return ResponseEntity.ok(Map.of("avatar", imageUrl));
         } catch (Exception e) {
+            e.printStackTrace(); // <-- muy importante para ver el error exacto en logs
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", e.getMessage()));
         }
     }
-}
+    }
