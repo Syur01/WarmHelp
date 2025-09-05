@@ -5,7 +5,9 @@ import com.warmhelp.app.dtosResponses.PublicUserProfileResponse;
 import com.warmhelp.app.dtosResponses.UserInfoResponseDTO;
 import com.warmhelp.app.exceptions.UserAlreadyExistException;
 import com.warmhelp.app.exceptions.UserNotFoundException;
+import com.warmhelp.app.repositories.UserInfoRepository;
 import com.warmhelp.app.repositories.UserRepository;
+import com.warmhelp.app.services.CloudinaryService;
 import com.warmhelp.app.services.IEmailService;
 import com.warmhelp.app.services.UserService;
 import com.warmhelp.app.models.User;
@@ -29,6 +31,8 @@ import java.util.Map;
 //@CrossOrigin("*")
 public class UserController {
 
+    private final CloudinaryService cloudinaryService;
+    private final UserInfoRepository userInfoRepository;
     private final UserService userService;
     private final UserRepository userRepository;
     @Autowired
@@ -37,9 +41,11 @@ public class UserController {
     @Autowired
     private UserServiceChat userServiceChat;
 
-    public UserController(UserService userService,UserRepository userRepository) {
+    public UserController(UserInfoRepository userInfoRepository, UserService userService,UserRepository userRepository, CloudinaryService cloudinaryService) {
         this.userService = userService;
         this.userRepository = userRepository;
+        this.cloudinaryService = cloudinaryService;
+        this.userInfoRepository = userInfoRepository;
     }
 
     @GetMapping
@@ -181,12 +187,19 @@ public class UserController {
     @PostMapping("/{id}/upload-avatar")
     public ResponseEntity<?> uploadAvatar(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         try {
-            String avatarUrl = userService.saveUserAvatar(id, file);
-            String fullUrl = "https://warmhelp-production.up.railway.app/" + avatarUrl;
-            return ResponseEntity.ok(Map.of("avatar", fullUrl));
+            // Llamada CORRECTA (no estática)
+            String imageUrl = cloudinaryService.uploadFile(file);
+
+            UserInfo userInfo = userInfoRepository.findByUserId(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+            userInfo.setAvatar(imageUrl);
+            userInfoRepository.save(userInfo);
+
+            return ResponseEntity.ok(Map.of("avatar", imageUrl));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
         }
     }
-
 }
