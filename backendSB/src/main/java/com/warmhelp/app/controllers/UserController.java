@@ -196,11 +196,14 @@ public class UserController {
 
             return ResponseEntity.ok(Map.of("avatar", imageUrl));
         } catch (Exception e) {
-            e.printStackTrace(); // <-- esto imprimirá todo el stack trace en Railway logs
+            e.printStackTrace();
+            Throwable root = e;
+            while (root.getCause() != null) root = root.getCause();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of(
                             "error", e.getMessage(),
-                            "cause", e.getCause() != null ? e.getCause().toString() : "null"
+                            "rootCause", root.getMessage(),
+                            "exception", e.getClass().getName()
                     ));
         }
     }
