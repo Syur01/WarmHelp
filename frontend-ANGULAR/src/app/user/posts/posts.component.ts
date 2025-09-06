@@ -132,7 +132,7 @@ export class PostsComponent implements OnInit {
     if (!imagePath || typeof imagePath !== 'string') return '';
     const trimmed = imagePath.trim();
     if (trimmed.startsWith('http')) return trimmed;
-    return `https://warmhelp-production.up.railway.app/api/uploads/images/${encodeURIComponent(
+    return `https://warmhelp.onrender.com/api/uploads/images/${encodeURIComponent(
       trimmed
     )}`;
   }

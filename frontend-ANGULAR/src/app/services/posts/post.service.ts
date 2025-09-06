@@ -7,7 +7,7 @@ import { Post } from '../interfaces/post';
   providedIn: 'root',
 })
 export class PostService {
-  private apiUrl = 'https://warmhelp-production.up.railway.app/api/posts';
+  private apiUrl = 'https://warmhelp.onrender.com/api/posts';
 
   constructor(private http: HttpClient) {}
 

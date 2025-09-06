@@ -6,17 +6,17 @@ import { map } from 'rxjs/operators'; // Importamos map
 import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProfessionalService {
-  private apiUrl = 'https://warmhelp-production.up.railway.app/api/professionalServices';
+  private apiUrl = 'https://warmhelp.onrender.com/api/professionalServices';
 
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<ProfessionalServiceInterface[]> {
     return this.http.get<any[]>(this.apiUrl).pipe(
       map((servicios: any[]) =>
-        servicios.map(s => ({
+        servicios.map((s) => ({
           id: s.id,
           title: s.title,
           description: s.description,
@@ -25,7 +25,7 @@ export class ProfessionalService {
           tax: s.tax,
           currencyType: s.currency,
           userName: s.username,
-          createdAt: s.createdAt
+          createdAt: s.createdAt,
         }))
       )
     );
@@ -41,20 +41,19 @@ export class ProfessionalService {
     return this.http.post(`${this.apiUrl}/${id}/update`, data);
   }
   getById(id: number): Observable<ProfessionalServiceInterface> {
-  return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
-    map(s => ({
-      id: s.id,
-      title: s.title,
-      description: s.description,
-      image: s.image,
-      price: s.price,
-      tax: s.tax,
-      currencyType: s.currency,
-      userName: s.username,
-      username: s.username,
-      createdAt: s.createdAt
-    }))
-  );
-}
-
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map((s) => ({
+        id: s.id,
+        title: s.title,
+        description: s.description,
+        image: s.image,
+        price: s.price,
+        tax: s.tax,
+        currencyType: s.currency,
+        userName: s.username,
+        username: s.username,
+        createdAt: s.createdAt,
+      }))
+    );
+  }
 }

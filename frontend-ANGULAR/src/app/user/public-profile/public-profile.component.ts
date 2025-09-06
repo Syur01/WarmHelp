@@ -76,14 +76,14 @@ export class PublicProfileComponent implements OnInit {
 
     return avatarPath.startsWith('http')
       ? avatarPath
-      : `https://warmhelp-production.up.railway.app/api${avatarPath}`;
+      : `https://warmhelp.onrender.com/api${avatarPath}`;
   }
   getImageUrl(imagePath: string): string {
     if (!imagePath || typeof imagePath !== 'string')
       return '/assets/image-not-found.jpg';
     const trimmed = imagePath.trim();
     if (trimmed.startsWith('http')) return trimmed;
-    return `https://warmhelp-production.up.railway.app/api/uploads/images/${encodeURIComponent(
+    return `https://warmhelp.onrender.com/api/uploads/images/${encodeURIComponent(
       trimmed
     )}`;
   }

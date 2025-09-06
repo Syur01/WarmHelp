@@ -12,7 +12,7 @@ export interface CommentRequest {
   providedIn: 'root',
 })
 export class CommentService {
-  private apiUrl = 'https://warmhelp-production.up.railway.app/api/comments';
+  private apiUrl = 'https://warmhelp.onrender.com/api/comments';
 
   constructor(private http: HttpClient) {}
 

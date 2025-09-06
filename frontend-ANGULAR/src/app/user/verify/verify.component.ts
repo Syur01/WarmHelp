@@ -20,9 +20,7 @@ export class VerifyComponent implements OnInit {
       console.log('Token recibido:', token);
       if (token) {
         this.http
-          .get(
-            `https://warmhelp-production.up.railway.app/api/users/verify?token=${token}`
-          )
+          .get(`https://warmhelp.onrender.com/api/users/verify?token=${token}`)
           .subscribe({
             next: (res) => {
               console.log('Verificación exitosa:', res);

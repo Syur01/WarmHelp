@@ -10,10 +10,9 @@ import SockJS from 'sockjs-client';
   providedIn: 'root',
 })
 export class ChatService {
-  private REST_URL = 'https://warmhelp-production.up.railway.app/api/chats';
-  private MESSAGE_URL =
-    'https://warmhelp-production.up.railway.app/api/messages';
-  private socketUrl = 'https://warmhelp-production.up.railway.app/api/chat';
+  private REST_URL = 'https://warmhelp.onrender.com/api/chats';
+  private MESSAGE_URL = 'https://warmhelp.onrender.com/api/messages';
+  private socketUrl = 'https://warmhelp.onrender.com/api/chat';
 
   private stompClient: Client | null = null;
 
