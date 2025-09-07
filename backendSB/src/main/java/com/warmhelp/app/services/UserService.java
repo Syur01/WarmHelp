@@ -424,7 +424,7 @@ public class UserService implements UserDetailsService {
         loginData.setNumber(userInfo.getNumber());
         loginData.setEmail(userInfo.getEmail());
         loginData.setMySelf_description(userInfo.getMySelf_description());
-        loginData.setAvatar("https://warmhelp.onrender.com/api" + userInfo.getAvatar());
+        loginData.setAvatar(userInfo.getAvatar());
 
 
 
