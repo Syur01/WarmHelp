@@ -75,12 +75,14 @@ export class PublicProfileComponent implements OnInit {
       return '/ken.gif'; // Imagen por defecto
     }
 
-    if (avatarPath.startsWith('http://') || avatarPath.startsWith('https://')) {
-    return avatarPath;
+  const cleanPath = avatarPath.trim(); // 🔑 recorta espacios
+
+  if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
+    return cleanPath; // usar Cloudinary directamente
   }
 
-  // Si es relativa, concatena con tu API (solo rutas internas)
-  return `${environment.apiUrl}${avatarPath}`;
+  // Si es relativa, concatena con tu API
+  return `${environment.apiUrl}${cleanPath}`;
   }
   getImageUrl(imagePath: string): string {
     if (!imagePath || typeof imagePath !== 'string')
