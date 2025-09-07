@@ -4,6 +4,7 @@ import { UserService } from '../../services/users/user.service';
 import { CartService } from '../../services/auth/cart.service';
 import { UseStateService } from '../../services/auth/use-state.service';
 import { PopupService } from '../../services/popup.service';
+import { environment } from '../../../environments/environment.prod';
 
 @Component({
   selector: 'app-public-profile',
@@ -74,9 +75,12 @@ export class PublicProfileComponent implements OnInit {
       return '/ken.gif'; // Imagen por defecto
     }
 
-    return avatarPath.startsWith('http')
-      ? avatarPath
-      : `https://warmhelp.onrender.com/api${avatarPath}`;
+    if (avatarPath.startsWith('http://') || avatarPath.startsWith('https://')) {
+    return avatarPath;
+  }
+
+  // Si es relativa, concatena con tu API (solo rutas internas)
+  return `${environment.apiUrl}${avatarPath}`;
   }
   getImageUrl(imagePath: string): string {
     if (!imagePath || typeof imagePath !== 'string')
