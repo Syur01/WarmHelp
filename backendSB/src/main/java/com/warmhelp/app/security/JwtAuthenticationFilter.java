@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // Rutas que no requieren JWT
-        if (path.startsWith("/users") || path.startsWith("/posts") || path.startsWith("/carts")) {
+        if (path.startsWith("/users") || path.startsWith("/posts") || path.startsWith("/carts")|| path.startsWith("/api/chat") || path.startsWith("/api/chats")) {
             filterChain.doFilter(request, response);
             return;
         }
