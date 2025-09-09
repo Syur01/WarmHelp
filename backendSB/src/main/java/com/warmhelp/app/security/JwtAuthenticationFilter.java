@@ -27,13 +27,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        String path = request.getRequestURI();
-//
-//        // Rutas que no requieren JWT
-//        if (path.startsWith("/users") || path.startsWith("/posts") || path.startsWith("/carts")|| path.startsWith("/api/chat") || path.startsWith("/api/chats")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
+        String path = request.getRequestURI();
+
+        // Rutas que no requieren JWT
+        if (path.startsWith("/users") || path.startsWith("/posts") || path.startsWith("/carts")|| path.startsWith("/api/chat") || path.startsWith("/api/chats")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         final String authHeader = request.getHeader("Authorization");
         String token = null;
@@ -62,13 +62,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return path.startsWith("/users")
-                || path.startsWith("/posts")
-                || path.startsWith("/carts")
-                || path.startsWith("/api/chat")
-                || path.startsWith("/api/chats");
-    }
+
 }
