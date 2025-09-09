@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -42,6 +41,7 @@ import { PaymentDeniedComponent } from './user/payment-denied/payment-denied.com
 import { ServicioProfesionalPublicoComponent } from './user/servicio-profesional-publico/servicio-profesional-publico.component';
 import { ProgresoPersonalComponent } from './user/progreso-personal/progreso-personal.component';
 import { ChatComponent } from './user/chat/chat.component';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -90,10 +90,10 @@ import { ChatComponent } from './user/chat/chat.component';
     BaseChartDirective,
     ReactiveFormsModule,
     FormsModule,
-    HttpClientModule,
-
   ],
-  providers: [],
+  providers: [
+    provideHttpClient(withInterceptorsFromDi())
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
