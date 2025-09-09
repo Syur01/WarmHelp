@@ -86,6 +86,7 @@ public class SecurityConfiguration {
                                 "/professionalServices/*/update",
                                 "/reviews",
                                 "/reviews/registerReview",
+                                "/api/chat",
                                 "/api/chat/**",
                                 "/api/chats",
                                 "/api/chats/*/messages",
