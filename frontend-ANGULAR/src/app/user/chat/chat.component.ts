@@ -326,7 +326,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   // Construye la URL completa
-  return `https://res.cloudinary.com/de5gqd8dd/image/upload/${avatarId}.jpg`;
+  return `https://res.cloudinary.com/de5gqd8dd/image/upload/${avatarId}`;
 }
 
   onImageError(event: Event): void {
