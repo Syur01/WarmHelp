@@ -49,11 +49,11 @@ public class ChatController {
 
     // ✅ Obtener chats por username
     @GetMapping("/user/username/{username}")
-    public ResponseEntity<List<Chat>> getChatsByUsername(@PathVariable String username) throws ChatNotFoundException {
+    public ResponseEntity<List<Chat>> getChatsByUsername(@PathVariable String username) {
         User user = userService.findByUsername(username)
-                .orElseThrow(() -> new ChatNotFoundException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
         List<Chat> chats = chatService.getChatsByUser(user);
-        return ResponseEntity.ok(chats);
+        return ResponseEntity.ok(chats); // Puede ser lista vacía
     }
 
     // ✅ Obtener un chat por ID

@@ -115,11 +115,10 @@ public class ChatService {
                 .orElseThrow();
     }
 
-    public List<Chat> getChatsByUser(User user) throws ChatNotFoundException {
-        List<Chat> chats = chatRepository.findByFirstUserOrSecondUser(user, user);
-        if (chats.isEmpty()) throw new ChatNotFoundException("Chat not found");
-        return chats;
+    public List<Chat> getChatsByUser(User user) {
+        return chatRepository.findByFirstUserOrSecondUser(user, user);
     }
+
 
     public Optional<Chat> getChatBetweenUsers(User user1, User user2) {
         Optional<Chat> chat = chatRepository.findByFirstUserAndSecondUser(user1, user2);
