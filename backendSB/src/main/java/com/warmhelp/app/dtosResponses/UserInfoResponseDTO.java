@@ -26,7 +26,15 @@ public class UserInfoResponseDTO {
         this.email = email;
         this.mySelf_description = mySelf_description;
         this.roleType = roleType;
-        this.avatar = avatar;
+        if (avatar != null && !avatar.isBlank()) {
+            if (avatar.startsWith("http")) {
+                this.avatar = avatar; // ya es URL
+            } else {
+                this.avatar = "https://res.cloudinary.com/de5gqd8dd/image/upload/" + avatar;
+            }
+        } else {
+            this.avatar = null; // o una default: "/ken.gif"
+        }
     }
 
     // Getters y Setters
