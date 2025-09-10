@@ -26,11 +26,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String path = request.getRequestURI();
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
 
-        // Rutas que no requieren JWT
+        String path = request.getRequestURI();
+        log.debug("Request path: {}", path);
+
+        // Opcional: rutas públicas que no requieren JWT
         if (path.startsWith("/users") || path.startsWith("/posts") || path.startsWith("/carts")) {
+            log.debug("Ruta pública, no requiere JWT: {}", path);
             filterChain.doFilter(request, response);
             return;
         }
@@ -41,26 +46,48 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-
             try {
-                username = this.jwtUtil.extractUsername(token);
+                username = jwtUtil.extractUsername(token);
+                log.debug("Token recibido para usuario: {}", username);
             } catch (JwtException e) {
-                logger.error("ERROR: Extracción username del token incorrecta: " + e.getMessage());
+                log.error("ERROR: Extracción de username del token falló: {}", e.getMessage());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Token inválido o corrupto");
+                return;
             }
+        } else {
+            log.warn("Authorization header no presente o mal formado");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Authorization header inválido");
+            return;
         }
 
+        // Validación del token y autenticación
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (this.jwtUtil.validateToken(token, username)) {
+            UserDetails userDetails;
+            try {
+                userDetails = userDetailsService.loadUserByUsername(username);
+            } catch (Exception e) {
+                log.error("Usuario no encontrado en DB: {}", username);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Usuario no encontrado");
+                return;
+            }
 
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            if (jwtUtil.validateToken(token, username)) {
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                log.info("Usuario autenticado correctamente: {}", username);
+            } else {
+                log.warn("Token inválido o expirado para usuario: {}", username);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Token inválido o expirado");
+                return;
             }
         }
 
         filterChain.doFilter(request, response);
     }
-
 }
