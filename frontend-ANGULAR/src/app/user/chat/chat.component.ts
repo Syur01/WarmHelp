@@ -233,19 +233,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     });
   }
 
-  // startChatWith(user: UserInterface): void {
-  //   console.log('Intentando iniciar chat con:', user.username);
-  //   if (!this.currentUser) return;
-
-  //   this.chatService
-  //     .getOrCreateChatBetweenUsers(this.currentUser.username, user.username)
-  //     .subscribe((chat) => {
-  //       if (!this.chatList.find((c) => c.id === chat.id)) {
-  //         this.chatList.push(chat);
-  //       }
-  //       this.selectChat(chat);
-  //     });
-  // }
   createTestChat() {
     if (!this.currentUser || this.users.length === 0) {
       console.log('No hay usuarios para chatear o usuario actual no definido');
@@ -332,10 +319,20 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (!msg.sender) return false; // o true, depende de tu lógica
     return msg.sender.username === this.currentUser?.username;
   }
-  getAvatarUrl(avatarPath: string | undefined): string {
-  return avatarPath || '/assets/image-not-found.jpg';
-}
+  getAvatarUrl(avatarPath: string): string {
+    if (!avatarPath || avatarPath.trim() === '') {
+      return '/ken.gif'; // Imagen por defecto
+    }
 
+    const cleanPath = avatarPath.trim(); // 🔑 recorta espacios
+
+    if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
+      return cleanPath; // usar Cloudinary directamente
+    }
+
+    // Si es relativa, concatena con tu API
+    return `${cleanPath}`;
+  }
 
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
