@@ -319,15 +319,22 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (!msg.sender) return false; // o true, depende de tu lógica
     return msg.sender.username === this.currentUser?.username;
   }
- getAvatarUrl(avatarId: string | undefined): string {
-  if (!avatarId) {
-    // Si no tiene avatar, puedes usar un avatar genérico en Cloudinary
-    return 'ken.gif'; // Imagen por defecto
+ getAvatarUrl(avatarPath: string | undefined): string {
+  if (!avatarPath || avatarPath.trim() === '') {
+    return '/ken.gif'; // Imagen por defecto
   }
 
-  // Construye la URL completa
-  return `https://res.cloudinary.com/de5gqd8dd/image/upload/${avatarId}`;
+  const cleanPath = avatarPath.trim();
+
+  // Caso 1: ya viene una URL completa (ej: https://res.cloudinary.com/...)
+  if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
+    return cleanPath;
+  }
+
+  // Caso 2: viene solo el public_id (ej: warmhelp/avatars/u9hrklk9icxuipwa9k8u)
+  return `ken.gif`;
 }
+
 
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
