@@ -77,20 +77,6 @@ public class ChatController {
         return ResponseEntity.ok(chat);
     }
 
-
-//    @GetMapping("/between")
-//    public ResponseEntity<Chat> getChatBetweenUsers(@RequestParam String user1, @RequestParam String user2) throws ChatNotFoundException {
-//        User firstUser = userService.findByUsername(user1)
-//                .orElseThrow(() -> new ChatNotFoundException("User1 not found"));
-//        User secondUser = userService.findByUsername(user2)
-//                .orElseThrow(() -> new ChatNotFoundException("User2 not found"));
-//
-//        Optional<Chat> chatOpt = chatService.getChatBetweenUsers(firstUser, secondUser);
-//        Chat chat = chatOpt.orElseThrow(() -> new ChatNotFoundException("Chat not found"));
-//
-//        return ResponseEntity.ok(chat);
-//    }
-
     // ✅ Agregar un mensaje a un chat
     @PostMapping("/{chatId}/messages")
     public ResponseEntity<Chat> addMessageToChat(@PathVariable Long chatId, @RequestBody Message message) throws ChatNotFoundException {
@@ -122,5 +108,16 @@ public class ChatController {
         return ResponseEntity.ok(responses);
     }
 
+    @GetMapping("/available-users/{username}")
+    public ResponseEntity<List<User>> getAvailableUsers(@PathVariable String username) {
+        User currentUser = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<User> users = userService.findAllUsers().stream()
+                .filter(u -> !u.getUsername().equals(username))
+                .toList();
+
+        return ResponseEntity.ok(users);
+    }
 
 }
