@@ -333,11 +333,9 @@ export class ChatComponent implements OnInit, OnDestroy {
     return msg.sender.username === this.currentUser?.username;
   }
   getAvatarUrl(avatarPath: string | undefined): string {
-    if (!avatarPath) return '/ken.gif';
-    return avatarPath.startsWith('http')
-      ? avatarPath
-      : `${avatarPath}`;
-  } 
+  return avatarPath || '/assets/image-not-found.jpg';
+}
+
 
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
