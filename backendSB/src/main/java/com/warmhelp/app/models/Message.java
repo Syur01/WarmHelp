@@ -34,8 +34,7 @@ public class Message {
     public Message() {
     }
 
-    public Message(Long id, String senderEmail, Date time, String replymessage, Chat chat) {
-        this.id = id;
+    public Message( String senderEmail, Date time, String replymessage, Chat chat) {
 //        this.senderEmail = senderEmail;
 //        this.time = time;
 //        this.replymessage = replymessage;

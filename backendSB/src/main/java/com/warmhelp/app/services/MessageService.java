@@ -21,6 +21,9 @@ public class MessageService {
     private MessageRepository messageRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private ChatService chatService;
 
     @Autowired
@@ -28,7 +31,7 @@ public class MessageService {
 
     public Message sendMessage(Long chatId, Long senderId, String content) {
         Chat chat = chatService.getChat(chatId);
-        User sender = userChatRepository.findById(senderId).orElseThrow(() -> new RuntimeException("User not found"));
+        User sender = userRepository.findById(senderId).orElseThrow(() -> new RuntimeException("User not found"));
 
         Message message = new Message();
         message.setChat(chat);
