@@ -41,7 +41,8 @@ import { PaymentDeniedComponent } from './user/payment-denied/payment-denied.com
 import { ServicioProfesionalPublicoComponent } from './user/servicio-profesional-publico/servicio-profesional-publico.component';
 import { ProgresoPersonalComponent } from './user/progreso-personal/progreso-personal.component';
 import { ChatComponent } from './user/chat/chat.component';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptors  } from '@angular/common/http';
+import { tokenInterceptor } from './services/interceptors/token.interceptor';
 
 @NgModule({
   declarations: [
@@ -91,9 +92,8 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
     ReactiveFormsModule,
     FormsModule,
   ],
-  providers: [
-    provideHttpClient(withInterceptorsFromDi())
-  ],
+  providers: [     provideHttpClient(withInterceptors([tokenInterceptor]))
+ ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
