@@ -6,15 +6,18 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
 
   const tokenService = inject(TokenService);
   const accessToken = tokenService.getAccessToken();
-    const publicRoutes = ['/auth/login', '/auth/register', '/users', '/posts', '/carts'];
+  const publicRoutes = ['/auth/login', '/auth/register', '/users', '/posts', '/carts'];
   const isPublic = publicRoutes.some(route => req.url.includes(route));
 
-  const cloneReq = req.clone({
-    setHeaders:{
-      'Content-Type': 'application/json',
-      ...(accessToken && !isPublic ? {'Authorization':'Bearer ' + accessToken} : undefined)
-    }
-  })
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
 
-  return next(cloneReq);
+  if (accessToken && !isPublic) {
+    headers['Authorization'] = `Bearer ${accessToken}`;
+  }
+
+  console.log('🔎 Interceptor -> URL:', req.url, '| isPublic:', isPublic, '| token:', accessToken);
+
+  return next(req.clone({ setHeaders: headers }));
 };
