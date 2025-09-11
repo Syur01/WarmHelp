@@ -335,13 +335,14 @@ handleChatDeletion(deletedChatId: number): void {
     if (!msg.sender) return false; // o true, depende de tu lógica
     return msg.sender.username === this.currentUser?.username;
   }
-  getAvatarUrl(avatarPath: string | undefined): string {
-  if (!avatarPath) return '/assets/ken.gif';
-  return avatarPath.startsWith('http')
-    ? avatarPath
-    : `${avatarPath}`;
+  getAvatarUrl(avatar?: string): string {
+  if (avatar) {
+    console.log('🖼️ Usando avatar personalizado:', avatar);
+    return avatar;
+  }
+  console.log('⚠️ Usando avatar por defecto');
+  return 'ken.gif';
 }
-
 
 onImageError(event: Event): void {
   const img = event.target as HTMLImageElement;
