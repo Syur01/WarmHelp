@@ -7,28 +7,30 @@
 
     <div class="chat-section">
       <h4>
-        <i class="bi bi-chat-dots"></i>
-        Mis Chats <span *ngIf="chatList.length > 0" class="chat-count">({{ chatList.length }})</span>
-        <button class="toggle-button" (click)="toggleChats()" title="Mostrar/Ocultar">
-          <i class="bi" [ngClass]="showChats ? 'bi-eye-slash' : 'bi-eye'"></i>
-        </button>
-      </h4>
+  <i class="bi bi-chat-dots"></i>
+  Mis Chats <span *ngIf="chatList.length > 0" class="chat-count">({{ chatList.length }})</span>
+  <button class="toggle-button" (click)="toggleChats()" title="Mostrar/Ocultar">
+    <i class="bi" [ngClass]="showChats ? 'bi-eye-slash' : 'bi-eye'"></i>
+  </button>
+</h4>
+
 
       <ul *ngIf="showChats">
-        <li *ngFor="let chat of chatList" class="chat-item" (click)="selectChat(chat)">
-          <div class="chat-info">
-            <img
-              [src]="getChatOpponent(chat)?.avatar || '/assets/image-not-found.jpg'"
-              alt="avatar"
-              class="avatar"
-            />
-            <span>{{ getChatOpponent(chat)?.username }}</span>
-          </div>
-          <button class="delete-chat" (click)="deleteChat(chat)">
-            <i class="bi bi-trash3-fill"></i>
-          </button>
-        </li>
-      </ul>
+  <li *ngFor="let chat of chatList" class="chat-item" (click)="selectChat(chat)">
+    <div class="chat-info">
+      <img
+        [src]="getAvatarUrl(getChatOpponent(chat)?.avatar)"
+        alt="avatar"
+        class="avatar"
+        (error)="onImageError($event)" />
+      <span>{{ getChatOpponent(chat)?.username }}</span>
+    </div>
+    <button class="delete-chat" (click)="deleteChat(chat)">
+      <i class="bi bi-trash3-fill"></i>
+    </button>
+  </li>
+</ul>
+
     </div>
 
     <div class="chat-section">
@@ -42,11 +44,10 @@
       <ul *ngIf="showNewChat">
         <li *ngFor="let user of users" (click)="startChatWith(user)" class="chat-user">
           <div class="chat-info">
-            <img
-              [src]="user.avatar || '/assets/image-not-found.jpg'"
-              alt="avatar"
-              class="avatar"
-            />
+            <img [src]="getAvatarUrl(user.avatar)"
+                 alt="avatar"
+                 class="avatar"
+                 (error)="onImageError($event)" />
             <span>{{ user.username }}</span>
           </div>
         </li>
@@ -58,11 +59,9 @@
   <section class="chat-panel" *ngIf="currentChat">
     <div class="chat-header"
          (click)="verPerfilPublico(getChatOpponent(currentChat)?.username); $event.stopPropagation()">
-      <img
-        class="chat-avatar"
-        [src]="getChatOpponent(currentChat)?.avatar || '/assets/image-not-found.jpg'"
-        alt="avatar"
-      />
+      <img class="chat-avatar"
+           [src]="getAvatarUrl(getChatOpponent(currentChat)?.avatar)"
+           (error)="onImageError($event)" />
       <h3>{{ getChatOpponent(currentChat)?.username }}</h3>
     </div>
 

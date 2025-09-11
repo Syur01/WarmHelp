@@ -11,9 +11,11 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
   const publicRoutes = ['/auth/login', '/auth/register', '/users', '/posts', '/carts'];
   const isPublic = publicRoutes.some(route => req.url.includes(route));
 
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
+  let headers: Record<string, string> = {};
+
+  if (!(req.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   if (accessToken && !isPublic) {
     headers['Authorization'] = `Bearer ${accessToken}`;
