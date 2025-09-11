@@ -40,7 +40,7 @@ public class UserServiceChatImpl implements UserServiceChat{
 
     @Override
     public List<User> findAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findAllWithUserInfo();
     }
 
     @Override
