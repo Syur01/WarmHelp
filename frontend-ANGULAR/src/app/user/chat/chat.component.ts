@@ -335,13 +335,13 @@ export class ChatComponent implements OnInit, OnDestroy {
   getAvatarUrl(avatar?: string): string {
     if (avatar) {
       console.log('🖼️ Usando avatar personalizado:', avatar);
-      // si es un path relativo, antepón apiUrl
+      // Si ya es URL de Cloudinary, úsala tal cual
       return avatar.startsWith('http')
         ? avatar
         : `${environment.apiUrl}${avatar}`;
     }
     console.log('⚠️ Usando avatar por defecto');
-    return '/assets/ken.gif';
+    return 'ken.gif';
   }
 
   onImageError(event: Event): void {
