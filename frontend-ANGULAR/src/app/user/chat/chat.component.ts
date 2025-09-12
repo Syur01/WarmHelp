@@ -332,16 +332,15 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (!msg.sender) return false; // o true, depende de tu lógica
     return msg.sender.username === this.currentUser?.username;
   }
-  getAvatarUrl(avatar?: string): string {
-    if (avatar) {
-      console.log('🖼️ Usando avatar personalizado:', avatar);
-      // Si ya es URL de Cloudinary, úsala tal cual
-      return avatar.startsWith('http')
-        ? avatar
-        : `${environment.apiUrl}${avatar}`;
+  getAvatarUrl(avatar: string | null | undefined): string {
+    console.log('🔍 Avatar recibido en getAvatarUrl:', avatar);
+
+    if (avatar && avatar.trim() !== '') {
+      return avatar; // Si ya es URL de Cloudinary, úsala directamente
     }
-    console.log('⚠️ Usando avatar por defecto');
-    return 'ken.gif';
+
+    console.warn('⚠️ Usando avatar por defecto');
+    return 'ken.gif'; // tu imagen por defecto local
   }
 
   onImageError(event: Event): void {
